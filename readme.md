@@ -11,3 +11,5 @@ subscribing
 ```sh
 curl -N http://localhost:5000/sse
 ```
+
+view with a browser [http://localhost:5000](http://localhost:5000)
