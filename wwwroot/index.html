@@ -16,7 +16,7 @@
         tag.innerHTML += 'Connected\n\n';
       };
       source.onerror = function (error) {
-        tag.innerHTML += `Error ${JSON.stringify(error)}`;
+        tag.innerHTML += `Error ${JSON.stringify(error)} \n\n`;
         console.log('An error has occurred while receiving stream', error);
       };
       source.onmessage = function (stream) {
