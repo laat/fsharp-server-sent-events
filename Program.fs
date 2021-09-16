@@ -11,7 +11,7 @@ open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Routing
 open Microsoft.Extensions.Primitives
 
-let current = Subject.behavior ""
+let current = Subject.behavior "first message!"
 
 let handlePost (ctx: HttpContext) =
     task {
