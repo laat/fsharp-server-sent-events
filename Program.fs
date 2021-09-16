@@ -1,17 +1,18 @@
 open System
 open System.IO
+open System.Reactive.Subjects
 open System.Threading.Tasks
 open FSharp.Control
 open FSharp.Control.Reactive
 open FSharp.Control.Tasks
 open Microsoft.AspNetCore.Hosting
-open Microsoft.Extensions.Hosting
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Http
 open Microsoft.AspNetCore.Routing
 open Microsoft.Extensions.Primitives
+open Microsoft.Extensions.Hosting
 
-let current = Subject.behavior "first message!"
+let current = Subject.Synchronize(Subject.behavior "first message!")
 
 let handlePost (ctx: HttpContext) =
     task {
