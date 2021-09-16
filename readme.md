@@ -3,7 +3,7 @@
 publishing
 
 ```sh
-curl http://localhost:5000/sse -d "sigurd var her"
+curl http://localhost:5000/sse -d "laat was here"
 ```
 
 subscribing
