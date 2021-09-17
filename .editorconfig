@@ -1,0 +1,8 @@
+[*.{fs,fsx,fsi,ml,mli}]
+indent_size=4
+max_line_length=120
+# fsharp_indent_on_try_with=true
+# fsharp_max_value_binding_width=40
+# fsharp_max_dot_get_expression_width=79
+# fsharp_multiline_block_brackets_on_same_column=true
+# fsharp_align_function_signature_to_indentation=true

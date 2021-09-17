@@ -12,38 +12,43 @@ open Microsoft.AspNetCore.Routing
 open Microsoft.Extensions.Primitives
 open Microsoft.Extensions.Hosting
 
-let current = Subject.Synchronize(Subject.behavior "first message!")
+let currentMessage =
+    "fist message!"
+    |> Subject.behavior
+    |> Subject.Synchronize
 
 let handlePost (ctx: HttpContext) =
     task {
-        printfn "POST %A" ctx.Request.Path
-
         use bodyStream = new StreamReader(ctx.Request.Body)
         let! body = bodyStream.ReadToEndAsync()
 
-        body |> current.OnNext
+        currentMessage.OnNext body
 
-        do! ctx.Response.WriteAsync body
+        do! ctx.Response.WriteAsync $"published: {body}"
     }
     :> Task
 
 let handleGet (ctx: HttpContext) =
     task {
-        printfn "GET %A" ctx.Request.Path
         ctx.Response.Headers.Add("Content-Type", StringValues "text/event-stream")
 
-        let signal =
+        let requestAborted =
             Async.AwaitWaitHandle ctx.RequestAborted.WaitHandle
             |> Async.Ignore
 
         do!
-            AsyncSeq.ofObservableBuffered current
-            |> AsyncSeq.takeUntilSignal signal
+            AsyncSeq.ofObservableBuffered currentMessage
+            |> AsyncSeq.takeUntilSignal requestAborted
             |> AsyncSeq.iterAsync
                 (fun next ->
-                    $"data: {next}\n\n"
-                    |> ctx.Response.WriteAsync
-                    |> Async.AwaitTask)
+                    async {
+                        do!
+                            $"data: {next}\n\n"
+                            |> ctx.Response.WriteAsync
+                            |> Async.AwaitTask
+
+                        do! ctx.Response.Body.FlushAsync() |> Async.AwaitTask
+                    })
     }
     :> Task
 
