@@ -5,10 +5,8 @@ open System.Threading.Tasks
 open FSharp.Control
 open FSharp.Control.Reactive
 open FSharp.Control.Tasks
-open Microsoft.AspNetCore.Hosting
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Http
-open Microsoft.AspNetCore.Routing
 open Microsoft.Extensions.Primitives
 open Microsoft.Extensions.Hosting
 
@@ -41,41 +39,31 @@ let handleGet (ctx: HttpContext) =
             |> AsyncSeq.takeUntilSignal requestAborted
             |> AsyncSeq.iterAsync
                 (fun next ->
-                    async {
-                        do!
-                            $"data: {next}\n\n"
-                            |> ctx.Response.WriteAsync
-                            |> Async.AwaitTask
-
-                        do! ctx.Response.Body.FlushAsync() |> Async.AwaitTask
-                    })
+                    task {
+                        do! $"data: {next}\n\n" |> ctx.Response.WriteAsync
+                        do! ctx.Response.Body.FlushAsync()
+                    }
+                    |> Async.AwaitTask)
     }
     :> Task
 
-let endpoints (endpoints: IEndpointRouteBuilder) =
-    endpoints.MapGet("/sse", RequestDelegate handleGet)
-    |> ignore
-
-    endpoints.MapPost("/sse", RequestDelegate handlePost)
-    |> ignore
-
-let configureApp (app: IApplicationBuilder) =
-    app.UseRouting() |> ignore
-    app.UseDefaultFiles() |> ignore
-    app.UseStaticFiles() |> ignore
-    app.UseEndpoints(Action<_> endpoints) |> ignore
-
-
 [<EntryPoint>]
 let main args =
-    Host
-        .CreateDefaultBuilder(args)
-        .ConfigureWebHostDefaults(fun builder ->
-            builder
-                .Configure(configureApp)
-                .ConfigureServices(fun services -> ())
+    let builder = WebApplication.CreateBuilder(args)
+    let app = builder.Build()
+
+    app
+        .UseRouting()
+        .UseDefaultFiles()
+        .UseStaticFiles()
+        .UseEndpoints(fun endpoints ->
+            endpoints.MapGet("/sse", RequestDelegate handleGet)
+            |> ignore
+
+            endpoints.MapPost("/sse", RequestDelegate handlePost)
             |> ignore)
-        .Build()
-        .Run()
+    |> ignore
+
+    app.Run()
 
     0
