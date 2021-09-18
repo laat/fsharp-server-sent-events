@@ -52,17 +52,11 @@ let main args =
     let builder = WebApplication.CreateBuilder(args)
     let app = builder.Build()
 
-    app
-        .UseRouting()
-        .UseDefaultFiles()
-        .UseStaticFiles()
-        .UseEndpoints(fun endpoints ->
-            endpoints.MapGet("/sse", RequestDelegate handleGet)
-            |> ignore
-
-            endpoints.MapPost("/sse", RequestDelegate handlePost)
-            |> ignore)
-    |> ignore
+    app.UseRouting() |> ignore
+    app.UseDefaultFiles() |> ignore
+    app.UseStaticFiles() |> ignore
+    app.MapGet ("/sse", handleGet) |> ignore
+    app.MapPost ("/sse", handlePost) |> ignore
 
     app.Run()
 
