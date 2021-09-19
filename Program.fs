@@ -35,7 +35,8 @@ let handleGet (ctx: HttpContext) =
             |> Async.Ignore
 
         do!
-            AsyncSeq.ofObservableBuffered currentMessage
+            currentMessage
+            |> AsyncSeq.ofObservableBuffered
             |> AsyncSeq.takeUntilSignal requestAborted
             |> AsyncSeq.iterAsync
                 (fun next ->
