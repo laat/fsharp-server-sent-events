@@ -4,7 +4,6 @@ open System.Reactive.Subjects
 open System.Threading.Tasks
 open FSharp.Control
 open FSharp.Control.Reactive
-open FSharp.Control.Tasks
 open Microsoft.AspNetCore.Builder
 open Microsoft.AspNetCore.Http
 open Microsoft.Extensions.Primitives

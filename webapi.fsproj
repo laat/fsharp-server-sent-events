@@ -8,6 +8,5 @@
   <ItemGroup>
     <PackageReference Include="FSharp.Control.AsyncSeq" Version="3.1.0" />
     <PackageReference Include="FSharp.Control.Reactive" Version="5.0.2" />
-    <PackageReference Include="Ply" Version="0.3.1" />
   </ItemGroup>
 </Project>
